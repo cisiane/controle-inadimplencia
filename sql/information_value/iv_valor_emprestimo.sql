@@ -1,22 +1,24 @@
 WITH faixas AS (
     SELECT
         CASE
-            WHEN Duracao_Emprestimo <= 12 THEN 'Até 12 meses'
-            WHEN Duracao_Emprestimo <= 24 THEN '13-24 meses'
-            WHEN Duracao_Emprestimo <= 36 THEN '25-36 meses'
-            ELSE 'Acima de 36 meses' 
-        END AS duracao_emprestimo,
+            WHEN Valor_Emprestimo <= 999 THEN 'Até R$ 999'
+            WHEN Valor_Emprestimo BETWEEN 1000 AND 1999 THEN 'R$ 1.000 a 1.999'
+            WHEN Valor_Emprestimo BETWEEN 2000 AND 2999 THEN 'R$ 2.000 a 2.999'
+            WHEN Valor_Emprestimo BETWEEN 3000 AND 3999 THEN 'R$ 3.000 a 3.999'
+            WHEN Valor_Emprestimo BETWEEN 4000 AND 4999 THEN 'R$ 4.000 a 4.999'
+            ELSE 'R$ 5.000 ou mais' 
+        END AS valor_emprestimo,
         inadimplencia
     FROM main.inadimplencia_credito
 ),
 resumo AS (
 	SELECT
-    	duracao_emprestimo,
+    	valor_emprestimo,
     	SUM(CASE WHEN inadimplencia = 1 THEN 1 ELSE 0 END) AS qtd_maus,
     	SUM(CASE WHEN inadimplencia = 0 THEN 1 ELSE 0 END) AS qtd_bons,
     	COUNT(*) AS total
 	FROM faixas
-	GROUP BY duracao_emprestimo
+	GROUP BY valor_emprestimo
 ),
 totais AS (
     SELECT
@@ -26,7 +28,7 @@ totais AS (
 ),
 proporcoes AS (
     SELECT
-        r.duracao_emprestimo,
+        r.valor_emprestimo,
         r.qtd_maus,
         r.qtd_bons,
         r.total,
@@ -54,8 +56,10 @@ FROM iv_parcial ip
 CROSS JOIN iv_total it
 ORDER BY 
 	CASE
-        WHEN duracao_emprestimo = 'Até 12 meses' THEN 1
-        WHEN duracao_emprestimo = '13-24 meses' THEN 2
-        WHEN duracao_emprestimo = '25-36 meses' THEN 3
-        ELSE 4
+        WHEN valor_emprestimo = 'Até R$ 999' THEN 1
+        WHEN valor_emprestimo = 'R$ 1.000 a 1.999' THEN 2
+        WHEN valor_emprestimo = 'R$ 2.000 a 2.999' THEN 3
+        WHEN valor_emprestimo = 'R$ 3.000 a 3.999' THEN 4
+        WHEN valor_emprestimo = 'R$ 4.000 a 4.999' THEN 5
+        ELSE 6
     END;

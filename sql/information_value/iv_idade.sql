@@ -1,22 +1,24 @@
 WITH faixas AS (
     SELECT
         CASE
-            WHEN Duracao_Emprestimo <= 12 THEN 'Até 12 meses'
-            WHEN Duracao_Emprestimo <= 24 THEN '13-24 meses'
-            WHEN Duracao_Emprestimo <= 36 THEN '25-36 meses'
-            ELSE 'Acima de 36 meses' 
-        END AS duracao_emprestimo,
+            WHEN Idade BETWEEN 18 AND 24 THEN '18 a 24'
+            WHEN Idade BETWEEN 25 AND 34 THEN '25 a 34'
+            WHEN Idade BETWEEN 35 AND 44 THEN '35 a 44'
+            WHEN Idade BETWEEN 45 AND 54 THEN '45 a 54'
+            WHEN Idade BETWEEN 55 AND 64 THEN '55 a 64'
+            ELSE '65+'
+        END AS faixa_etaria,
         inadimplencia
     FROM main.inadimplencia_credito
 ),
 resumo AS (
 	SELECT
-    	duracao_emprestimo,
+    	faixa_etaria,
     	SUM(CASE WHEN inadimplencia = 1 THEN 1 ELSE 0 END) AS qtd_maus,
     	SUM(CASE WHEN inadimplencia = 0 THEN 1 ELSE 0 END) AS qtd_bons,
     	COUNT(*) AS total
 	FROM faixas
-	GROUP BY duracao_emprestimo
+	GROUP BY faixa_etaria
 ),
 totais AS (
     SELECT
@@ -26,7 +28,7 @@ totais AS (
 ),
 proporcoes AS (
     SELECT
-        r.duracao_emprestimo,
+        r.faixa_etaria,
         r.qtd_maus,
         r.qtd_bons,
         r.total,
@@ -51,11 +53,4 @@ SELECT
     ip.*,
     it.iv_total
 FROM iv_parcial ip
-CROSS JOIN iv_total it
-ORDER BY 
-	CASE
-        WHEN duracao_emprestimo = 'Até 12 meses' THEN 1
-        WHEN duracao_emprestimo = '13-24 meses' THEN 2
-        WHEN duracao_emprestimo = '25-36 meses' THEN 3
-        ELSE 4
-    END;
+CROSS JOIN iv_total it;
