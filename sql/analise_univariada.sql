@@ -1,6 +1,6 @@
 -- =====================================================
 -- Projeto: Controle da Inadimplência em Operações de Crédito
--- Etapa 3: Análise Univariada
+-- Análise Univariada
 -- Tabela analisada: inadimplencia_credito
 -- Ferramenta: DuckDB
 -- =====================================================
