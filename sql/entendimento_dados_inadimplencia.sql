@@ -1,5 +1,5 @@
 -- Projeto: Controle da Inadimplência em Operações de Crédito
--- Etapa 2: Entendimento dos Dados
+-- Entendimento dos Dados
 -- Tabela analisada: inadimplencia_credito
 
 /* =====================================================
